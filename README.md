@@ -56,6 +56,41 @@ end
 Braai::Template.new(template).render # => "I'm MARK and Damn, I love BBQ!!"
 </code></pre>
 
+### For Loops
+
+Braai supports looping right out of the box.
+
+<pre><code>
+template = <<-EOF
+&lt;h1>{{ greet }}&lt;/h1>
+&lt;ul>
+  {{ for product in products }}
+    &lt;li>{{ product }}&lt;/li>
+  {{ /for }}
+&lt;/ul>
+&lt;div>
+  {{ for food in foods }}
+    &lt;p>{{ food }}&lt;/p>
+  {{ /for }}
+&lt;/div>
+&lt;h2>{{greet.upcase}}&lt;/h2>
+EOF
+
+Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
+# =>
+"&lt;h1>mark&lt;/h1>
+&lt;ul>
+    &lt;li>car&lt;/li>
+    &lt;li>boat&lt;/li>
+    &lt;li>truck&lt;/li>
+&lt;/ul>
+&lt;div>
+    &lt;p>apple&lt;/p>
+    &lt;p>orange&lt;/p>
+&lt;/div>
+&lt;h2>MARK&lt;/h2>"
+</code></pre>
+
 ## Contributing
 
 1. Fork it
