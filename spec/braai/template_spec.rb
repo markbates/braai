@@ -36,10 +36,29 @@ describe Braai::Template do
       res.should eql("<h1>Hi Mark</h1><h2>Hi Mark</h2>")
     end
 
-    it "let's unknown handlers pass without error" do
-      template = "<h1>{{greet}}</h1><h2>{{ say_hello }}</h2>"
-      res = Braai::Template.new(template).render(greet: "Hi Mark")
-      res.should eql("<h1>Hi Mark</h1><h2>{{ say_hello }}</h2>")
+    context "for loops" do
+      
+      let(:template) do
+        <<-EOF
+          <h1>{{ greet }}</h1>
+          <ul>
+            {{ for product in products }}
+              <li>{{ product }}</li>
+            {{ /for }}
+          </ul>
+          <h2>{{greet.upcase}}</h2>
+        EOF
+      end
+
+      it "renders the loop" do
+        res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck})
+        res.should match("<h1>mark</h1>")
+        res.should match("<li>car</li>")
+        res.should match("<li>boat</li>")
+        res.should match("<li>truck</li>")
+        res.should match("<h2>MARK</h2>")
+      end
+
     end
 
     context "default handler" do

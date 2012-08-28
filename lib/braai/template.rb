@@ -10,9 +10,7 @@ class Braai::Template
     @handlers = self.class.handlers.merge(handlers)
   end
 
-  def handler(name)
-    self.handlers[name]
-  end
+
 
   def render(attributes = {})
     begin
@@ -27,8 +25,8 @@ class Braai::Template
   def render!(attributes)
     self.attributes = HashWithIndifferentAccess.new(attributes)
     results = self.template.dup
-    
-    keys = self.template.scan(/{{\s*[^\s}]+\s*}}/).flatten.uniq
+    # {{\s*for (\w+) in (\w+).+\/for\s*}}
+    keys = self.template.scan(Braai.config.handler_regex).flatten.uniq
     keys.each do |key|
       stripped_key = key.gsub(/({|})/, "").strip
       matched = false
