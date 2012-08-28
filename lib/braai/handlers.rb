@@ -17,7 +17,16 @@ module Braai::Handlers
   end
 
   def reset!
-    @handlers = {}
+    @handlers = {
+      /^([\w]+)\.([\w]+)$/i => ->(template, key, matches) {
+        attr = template.attributes[matches.first]
+        attr ? attr.send(matches.last) : nil
+      },
+      /^(\w+)$/i => ->(template, key, matches) {
+        attr = template.attributes[matches.first]
+        attr ? attr.to_s : nil
+      }
+    }
     return @handlers
   end
 

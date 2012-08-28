@@ -42,6 +42,22 @@ describe Braai::Template do
       res.should eql("<h1>Hi Mark</h1><h2>{{ say_hello }}</h2>")
     end
 
+    context "default handler" do
+      
+      let(:template) { "{{ greet }} {{ name.upcase }}" }
+
+      it "uses the default handler to render" do
+        res = Braai::Template.new(template).render(greet: "Hi", name: "mark")
+        res.should eql("Hi MARK")
+      end
+
+      it "handles the attribute not being there" do
+        res = Braai::Template.new(template).render(greet: "Hi")
+        res.should eql("Hi {{ name.upcase }}")
+      end
+
+    end
+
     context "missing handlers" do
 
       before(:each) do
@@ -60,7 +76,7 @@ describe Braai::Template do
 
         it "raises an error" do
           expect {
-            Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
+            Braai::Template.new("{{ please.greet.me }}").render(greet: "Hi Mark")
           }.to raise_error(Braai::MissingHandlerError)
         end
 

@@ -43,10 +43,11 @@ describe Braai::Handlers do
   describe 'reset!' do
     
     it "resets the handlers to their original state" do
+      handlers.should have(2).handlers
       map("foo") {}
-      handlers.should_not be_empty
+      handlers.should have(3).handlers
       reset!
-      handlers.should be_empty
+      handlers.should have(2).handlers
     end
 
   end

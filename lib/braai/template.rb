@@ -25,7 +25,7 @@ class Braai::Template
   end
 
   def render!(attributes)
-    self.attributes = attributes
+    self.attributes = HashWithIndifferentAccess.new(attributes)
     results = self.template.dup
     
     keys = self.template.scan(/{{\s*[^\s}]+\s*}}/).flatten.uniq
