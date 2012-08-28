@@ -51,6 +51,7 @@ describe Braai::Template do
       end
 
       it "renders the loop" do
+        pending
         res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck})
         res.should match("<h1>mark</h1>")
         res.should match("<li>car</li>")

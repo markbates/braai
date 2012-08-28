@@ -5,6 +5,7 @@ require "braai/configuration"
 require "braai/errors"
 require "braai/handlers"
 require "braai/template"
+require "braai/context"
 
 module Braai
 
