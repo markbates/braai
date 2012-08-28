@@ -46,17 +46,23 @@ describe Braai::Template do
               <li>{{ product }}</li>
             {{ /for }}
           </ul>
+          <div>
+            {{ for food in foods }}
+              <p>{{ food }}</p>
+            {{ /for }}
+          </div>
           <h2>{{greet.upcase}}</h2>
         EOF
       end
 
       it "renders the loop" do
-        pending
-        res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck})
+        res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
         res.should match("<h1>mark</h1>")
         res.should match("<li>car</li>")
         res.should match("<li>boat</li>")
         res.should match("<li>truck</li>")
+        res.should match("<p>apple</p>")
+        res.should match("<p>orange</p>")
         res.should match("<h2>MARK</h2>")
       end
 

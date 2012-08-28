@@ -20,15 +20,30 @@ class Braai::Context
   end
 
   def render!
-    # {{\s*for (\w+) in (\w+).+\/for\s*}}
-    keys = self.template.scan(Braai.config.handler_regex).flatten.uniq
-    keys.each do |key|
-      self.handle_key(key)
-    end
+    self.process_loops
+    self.process_keys
     return self.template
   end
 
   protected
+  def process_loops
+    loops = self.template.scan(Braai.config.for_loop_regex)
+    loops.each do |loop|
+      res = []
+      self.attributes[loop[2]].each do |val|
+        res << Braai::Context.new(loop[3], self.handlers, self.attributes.merge(loop[1] => val)).render!
+      end
+      self.template.gsub!(loop[0], res.join("\n"))
+    end
+  end
+
+  def process_keys
+    keys = self.template.scan(Braai.config.handler_regex).flatten.uniq
+    keys.each do |key|
+      self.handle_key(key)
+    end
+  end
+
   def handle_key(key)
     stripped_key = key.gsub(/({|})/, "").strip
     matched = false
