@@ -9,7 +9,7 @@ class Braai::Configuration
   def initialize
     self.raise_on_missing_handler = false
     self.swallow_handler_errors = true
-    self.handler_regex = /{{\s*[^\s}]+\s*}}/i
+    self.handler_regex = /{{\s*[^}]+\s*}}/i
     self.for_loop_regex = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
   end
 

@@ -66,6 +66,19 @@ describe Braai::Template do
         res.should match("<h2>MARK</h2>")
       end
 
+      it "description" do
+        template = "I'm {{ name }} and {{ mmm... bbq }}!"
+        Braai::Template.map(/mmm\.\.\. bbq/i) do |template, key, matches|
+          "Damn, I love BBQ!"
+        end
+
+        Braai::Template.map(/name/i) do |template, key, matches|
+          template.attributes[matches.first].upcase
+        end
+
+        puts Braai::Template.new(template).render(name: "Mark")
+      end
+
     end
 
     context "default handler" do

@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Braai::VERSION
   gem.authors       = ["Mark Bates"]
   gem.email         = ["mark@markbates.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Fully extensible templating system.}
+  gem.summary       = %q{Fully extensible templating system.}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
