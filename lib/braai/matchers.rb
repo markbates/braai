@@ -18,12 +18,19 @@ module Braai::Matchers
 
   def reset!
     @matchers = {
-      /^([\w]+)\.([\w]+)$/i => ->(template, key, matches) {
-        attr = template.attributes[matches.first]
-        attr ? attr.send(matches.last) : nil
+      /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im => ->(template, key, matches) {
+        res = []
+        template.attributes[matches[2]].each do |val|
+          res << Braai::Context.new(matches[3], template.matchers, template.attributes.merge(matches[1] => val)).render
+        end
+        res.join("\n")
       },
-      /^(\w+)$/i => ->(template, key, matches) {
-        attr = template.attributes[matches.first]
+      /({{\s*([\w]+)\.([\w]+)\s*}})/i => ->(template, key, matches) {
+        attr = template.attributes[matches[1]]
+        attr ? attr.send(matches[2]) : nil
+      },
+      /({{\s*([\w]+)\s*}})/i => ->(template, key, matches) {
+        attr = template.attributes[matches.last]
         attr ? attr.to_s : nil
       }
     }

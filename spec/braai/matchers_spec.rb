@@ -43,11 +43,11 @@ describe Braai::Matchers do
   describe 'reset!' do
     
     it "resets the matchers to their original state" do
-      matchers.should have(2).matchers
-      map("foo") {}
       matchers.should have(3).matchers
+      map("foo") {}
+      matchers.should have(4).matchers
       reset!
-      matchers.should have(2).matchers
+      matchers.should have(3).matchers
     end
 
   end

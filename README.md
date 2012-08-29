@@ -28,7 +28,7 @@ The first matcher is a simple <code>to_s</code> matcher. It will match a single 
 <pre><code>
 template = "Hi {{ name }}!"
 response = Braai::Template.new(template).render(name: "Mark")
-response # => "Hi Mark!"
+response.should eql "Hi Mark!"
 </code></pre>
 
 The second matcher will call a method on the variable.
@@ -36,7 +36,7 @@ The second matcher will call a method on the variable.
 <pre><code>
 template = "Hi {{ name.upcase }}!"
 response = Braai::Template.new(template).render(name: "Mark")
-response # => "Hi MARK!"
+response.should eql "Hi MARK!"
 </code></pre>
 
 ### Custom Matchers
@@ -45,15 +45,16 @@ Braai let's you easily define your own matchers to do whatever you would like to
 
 <pre><code>
 template = "I'm {{ name }} and {{ mmm... bbq }}!"
-Braai::Template.map(/mmm\.\.\. bbq/i) do |template, key, matches|
+Braai::Template.map(/({{\s*mmm\.\.\. bbq\s*}})/i) do |template, key, matches|
   "Damn, I love BBQ!"
 end
 
-Braai::Template.map(/name/i) do |template, key, matches|
-  template.attributes[matches.first].upcase
+Braai::Template.map(/({{\s*name\s*}})/i) do |template, key, matches|
+  template.attributes[:name].upcase
 end
 
-Braai::Template.new(template).render # => "I'm MARK and Damn, I love BBQ!!"
+response = Braai::Template.new(template).render(name: "mark")
+response.should eql "I'm MARK and Damn, I love BBQ!!"
 </code></pre>
 
 ### For Loops
@@ -76,19 +77,14 @@ template = &lt;&lt;-EOF
 &lt;h2>{{greet.upcase}}&lt;/h2>
 EOF
 
-Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
-# =>
-"&lt;h1>mark&lt;/h1>
-&lt;ul>
-    &lt;li>car&lt;/li>
-    &lt;li>boat&lt;/li>
-    &lt;li>truck&lt;/li>
-&lt;/ul>
-&lt;div>
-    &lt;p>apple&lt;/p>
-    &lt;p>orange&lt;/p>
-&lt;/div>
-&lt;h2>MARK&lt;/h2>"
+res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
+res.should match("&lt;h1>mark&lt;/h1>")
+res.should match("&lt;li>car&lt;/li>")
+res.should match("&lt;li>boat&lt;/li>")
+res.should match("&lt;li>truck&lt;/li>")
+res.should match("&lt;p>apple&lt;/p>")
+res.should match("&lt;p>orange&lt;/p>")
+res.should match("&lt;h2>MARK&lt;/h2>")
 </code></pre>
 
 ## Contributing

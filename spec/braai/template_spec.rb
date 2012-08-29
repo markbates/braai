@@ -57,7 +57,6 @@ EOF
 
       it "renders the loop" do
         res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
-        puts res
         res.should match("<h1>mark</h1>")
         res.should match("<li>car</li>")
         res.should match("<li>boat</li>")
@@ -66,21 +65,6 @@ EOF
         res.should match("<p>orange</p>")
         res.should match("<h2>MARK</h2>")
       end
-
-      # it "description" do
-      #   template = "I'm {{ name }} and {{ mmm... bbq }}!"
-      #   Braai::Template.map(/mmm\.\.\. bbq/i) do |template, key, matches|
-      #     puts "key: #{key.inspect}"
-      #     puts "matches: #{matches.inspect}"
-      #     "Damn, I love BBQ!"
-      #   end
-
-      #   Braai::Template.map(/name/i) do |template, key, matches|
-      #     template.attributes[matches.first].upcase
-      #   end
-
-      #   puts Braai::Template.new(template).render(name: "Mark")
-      # end
 
     end
 
@@ -100,59 +84,21 @@ EOF
 
     end
 
-    context "missing matchers" do
-
-      before(:each) do
-        Braai::Template.reset!
-      end
-
-      after(:each) do
-        Braai.config.raise_on_missing_matcher = false
-      end
-      
-      context "raise_on_missing_matcher is true" do
-        
-        before(:each) do
-          Braai.config.raise_on_missing_matcher = true
-        end
-
-        it "raises an error" do
-          expect {
-            Braai::Template.new("{{ please.greet.me }}").render(greet: "Hi Mark")
-          }.to raise_error(Braai::MissingMatcherError)
-        end
-
-      end
-
-      context "raise_on_missing_matcher is false" do
-
-        it "does not raise an error" do
-          expect {
-            res = Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
-            res.should eql("{{ greet }}")
-          }.to_not raise_error(Braai::MissingMatcherError)
-        end
-        
-      end
-
-    end
-
     context "matcher errors" do
       
       before(:each) do
-        Braai::Template.map(/^foo$/) do |view, key, matches|
+        Braai::Template.map(/foo/) do |view, key, matches|
           raise ArgumentError 
         end
       end
 
-      let(:template) { "{{ foo }}" }
+      let(:template) { "foo" }
 
       context "swallow_matcher_errors is true" do
         
         it "swallows errors in the matcher" do
           expect {
             res = Braai::Template.new(template).render()
-            res.should eql template
           }.to_not raise_error
         end
 
@@ -166,7 +112,7 @@ EOF
         
         it "raises the errors from the matcher" do
           expect {
-            Braai::Template.new(template).render()
+            res = Braai::Template.new(template).render
           }.to raise_error(ArgumentError)
         end
 

@@ -11,17 +11,8 @@ class Braai::Template
   end
 
   def render(attributes = {})
-    begin
-      return self.render!(attributes)
-    rescue Exception => e
-      Braai.logger.error(e)
-      raise e
-    end
-  end
-
-  def render!(attributes)
     context = Braai::Context.new(self.template, self.matchers, attributes)
-    context.render!
+    context.render
   end
 
 end
