@@ -61,7 +61,7 @@ Braai::Template.new(template).render # => "I'm MARK and Damn, I love BBQ!!"
 Braai supports looping right out of the box.
 
 <pre><code>
-template = <<-EOF
+template = &lt;&lt;-EOF
 &lt;h1>{{ greet }}&lt;/h1>
 &lt;ul>
   {{ for product in products }}
