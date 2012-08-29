@@ -1,23 +1,23 @@
-module Braai::Handlers
+module Braai::Matchers
 
-  def handlers
-    @handlers ||= reset!
+  def matchers
+    @matchers ||= reset!
   end
 
   def map(regex, &block)
-    @handlers = {regex.to_s => block}.merge(self.handlers)
+    @matchers = {regex.to_s => block}.merge(self.matchers)
   end
 
   def unmap(regex)
-    self.handlers.delete(regex.to_s)
+    self.matchers.delete(regex.to_s)
   end
 
   def clear!
-    self.handlers.clear
+    self.matchers.clear
   end
 
   def reset!
-    @handlers = {
+    @matchers = {
       /^([\w]+)\.([\w]+)$/i => ->(template, key, matches) {
         attr = template.attributes[matches.first]
         attr ? attr.send(matches.last) : nil
@@ -27,7 +27,7 @@ module Braai::Handlers
         attr ? attr.to_s : nil
       }
     }
-    return @handlers
+    return @matchers
   end
 
 end

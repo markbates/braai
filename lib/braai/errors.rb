@@ -1,7 +1,7 @@
 module Braai
-  class MissingHandlerError < StandardError
+  class MissingMatcherError < StandardError
     def initialize(key)
-      super "#{key} was missing a handler! Please implement one."
+      super "#{key} was missing a matcher! Please implement one."
     end
   end
 end

@@ -3,7 +3,7 @@ require 'active_support/hash_with_indifferent_access'
 require "braai/version"
 require "braai/configuration"
 require "braai/errors"
-require "braai/handlers"
+require "braai/matchers"
 require "braai/template"
 require "braai/context"
 

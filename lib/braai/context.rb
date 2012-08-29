@@ -2,12 +2,12 @@ class Braai::Context
 
   attr_accessor :attributes
   attr_accessor :template
-  attr_accessor :handlers
+  attr_accessor :matchers
 
-  def initialize(template, handlers, attributes = {})
+  def initialize(template, matchers, attributes = {})
     self.attributes = HashWithIndifferentAccess.new(attributes)
     self.template = template.dup
-    self.handlers = handlers
+    self.matchers = matchers
   end
 
   def render
@@ -31,14 +31,14 @@ class Braai::Context
     loops.each do |loop|
       res = []
       self.attributes[loop[2]].each do |val|
-        res << Braai::Context.new(loop[3], self.handlers, self.attributes.merge(loop[1] => val)).render!
+        res << Braai::Context.new(loop[3], self.matchers, self.attributes.merge(loop[1] => val)).render!
       end
       self.template.gsub!(loop[0], res.join("\n"))
     end
   end
 
   def process_keys
-    keys = self.template.scan(Braai.config.handler_regex).flatten.uniq
+    keys = self.template.scan(Braai.config.matcher_regex).flatten.uniq
     keys.each do |key|
       self.handle_key(key)
     end
@@ -47,20 +47,20 @@ class Braai::Context
   def handle_key(key)
     stripped_key = key.gsub(/({|})/, "").strip
     matched = false
-    self.handlers.each do |regex, handler|
+    self.matchers.each do |regex, matcher|
       regex = Regexp.new(regex)
       if regex.match(stripped_key)
         begin
-          val = handler.call(self, stripped_key, stripped_key.scan(regex).flatten)
+          val = matcher.call(self, stripped_key, stripped_key.scan(regex).flatten)
           self.template.gsub!(key, val.to_s) if val
         rescue Exception => e
-          raise e unless Braai.config.swallow_handler_errors
+          raise e unless Braai.config.swallow_matcher_errors
         end
         matched = true
         break
       end
     end
-    raise Braai::MissingHandlerError.new(stripped_key) if !matched && Braai.config.raise_on_missing_handler    
+    raise Braai::MissingMatcherError.new(stripped_key) if !matched && Braai.config.raise_on_missing_matcher    
   end
 
 end

@@ -23,7 +23,7 @@ Or install it yourself as:
 
 Braai comes shipped with two simple matchers for you, but you can easily add your own.
 
-The first matcher is a simple <code>to_s</code> handler. It will match a single variable and then call <code>to_s</code> on it:
+The first matcher is a simple <code>to_s</code> matcher. It will match a single variable and then call <code>to_s</code> on it:
 
 <pre><code>
 template = "Hi {{ name }}!"

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Braai::Template do
   
   let(:greet_regex) { /^greet$/i }
-  let(:greet_handler) do
+  let(:greet_matcher) do
     ->(view, key, matches) {
       view.attributes[:greet]
     }
@@ -11,10 +11,10 @@ describe Braai::Template do
 
   describe '.map' do
 
-    it "let's you register a handler" do
-      Braai::Template.handlers.should_not have_key(greet_regex.to_s)
-      Braai::Template.map(greet_regex, &greet_handler)
-      Braai::Template.handlers.should have_key(greet_regex.to_s)
+    it "let's you register a matcher" do
+      Braai::Template.matchers.should_not have_key(greet_regex.to_s)
+      Braai::Template.map(greet_regex, &greet_matcher)
+      Braai::Template.matchers.should have_key(greet_regex.to_s)
     end
     
   end
@@ -22,7 +22,7 @@ describe Braai::Template do
   describe '#render' do
 
     before(:each) do
-      Braai::Template.map(greet_regex, &greet_handler)
+      Braai::Template.map(greet_regex, &greet_matcher)
     end
     
     it "renders a simple template" do
@@ -84,11 +84,11 @@ EOF
 
     end
 
-    context "default handler" do
+    context "default matcher" do
       
       let(:template) { "{{ greet }} {{ name.upcase }}" }
 
-      it "uses the default handler to render" do
+      it "uses the default matcher to render" do
         res = Braai::Template.new(template).render(greet: "Hi", name: "mark")
         res.should eql("Hi MARK")
       end
@@ -100,44 +100,44 @@ EOF
 
     end
 
-    context "missing handlers" do
+    context "missing matchers" do
 
       before(:each) do
         Braai::Template.reset!
       end
 
       after(:each) do
-        Braai.config.raise_on_missing_handler = false
+        Braai.config.raise_on_missing_matcher = false
       end
       
-      context "raise_on_missing_handler is true" do
+      context "raise_on_missing_matcher is true" do
         
         before(:each) do
-          Braai.config.raise_on_missing_handler = true
+          Braai.config.raise_on_missing_matcher = true
         end
 
         it "raises an error" do
           expect {
             Braai::Template.new("{{ please.greet.me }}").render(greet: "Hi Mark")
-          }.to raise_error(Braai::MissingHandlerError)
+          }.to raise_error(Braai::MissingMatcherError)
         end
 
       end
 
-      context "raise_on_missing_handler is false" do
+      context "raise_on_missing_matcher is false" do
 
         it "does not raise an error" do
           expect {
             res = Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
             res.should eql("{{ greet }}")
-          }.to_not raise_error(Braai::MissingHandlerError)
+          }.to_not raise_error(Braai::MissingMatcherError)
         end
         
       end
 
     end
 
-    context "handler errors" do
+    context "matcher errors" do
       
       before(:each) do
         Braai::Template.map(/^foo$/) do |view, key, matches|
@@ -147,9 +147,9 @@ EOF
 
       let(:template) { "{{ foo }}" }
 
-      context "swallow_handler_errors is true" do
+      context "swallow_matcher_errors is true" do
         
-        it "swallows errors in the handler" do
+        it "swallows errors in the matcher" do
           expect {
             res = Braai::Template.new(template).render()
             res.should eql template
@@ -158,13 +158,13 @@ EOF
 
       end
 
-      context "swallow_handler_errors is false" do
+      context "swallow_matcher_errors is false" do
 
         before(:each) do
-          Braai.config.swallow_handler_errors = false
+          Braai.config.swallow_matcher_errors = false
         end
         
-        it "raises the errors from the handler" do
+        it "raises the errors from the matcher" do
           expect {
             Braai::Template.new(template).render()
           }.to raise_error(ArgumentError)
