@@ -16,6 +16,7 @@ class Braai::Context
         regex = Regexp.new(regex)
         matches = self.template.scan(regex)
         matches.each do |set|
+          set = [set].flatten.map {|m| m.strip}
           val = matcher.call(self, set[0], set)
           self.template.gsub!(set[0], val.to_s) if val
         end
