@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Braai::Template do
-  
+
   let(:greet_regex) { /^greet$/i }
   let(:greet_matcher) do
     ->(view, key, matches) {
@@ -16,7 +16,7 @@ describe Braai::Template do
       Braai::Template.map(greet_regex, &greet_matcher)
       Braai::Template.matchers.should have_key(greet_regex.to_s)
     end
-    
+
   end
 
   describe '#render' do
@@ -24,7 +24,7 @@ describe Braai::Template do
     before(:each) do
       Braai::Template.map(greet_regex, &greet_matcher)
     end
-    
+
     it "renders a simple template" do
       res = Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
       res.should eql("Hi Mark")
@@ -36,8 +36,33 @@ describe Braai::Template do
       res.should eql("<h1>Hi Mark</h1><h2>Hi Mark</h2>")
     end
 
+    context 'matches' do
+
+      context 'multimatches' do
+
+        let(:multi_regex) { /({{\s*(greet)\s*(mark)?\s*}})/ }
+        let(:multi_matcher) do
+          ->(view, key, matches) {
+            "#{matches[1]}#{matches[2]}"
+          }
+        end
+
+        before(:each) do
+          Braai::Template.map(multi_regex, &multi_matcher)
+        end
+
+        it "allows nil matches" do
+          template = "<h1>{{ greet }}</h1><h2>{{ greet mark }}</h2>"
+          res = Braai::Template.new(template).render
+          res.should eql("<h1>greet</h1><h2>greetmark</h2>")
+        end
+
+      end
+
+    end
+
     context "for loops" do
-      
+
       let(:template) do
 <<-EOF
 <h1>{{ greet }}</h1>
@@ -69,7 +94,7 @@ EOF
     end
 
     context "default matcher" do
-      
+
       let(:template) { "{{ greet }} {{ name.upcase }}" }
 
       it "uses the default matcher to render" do
@@ -85,17 +110,17 @@ EOF
     end
 
     context "matcher errors" do
-      
+
       before(:each) do
         Braai::Template.map(/foo/) do |view, key, matches|
-          raise ArgumentError 
+          raise ArgumentError
         end
       end
 
       let(:template) { "foo" }
 
       context "swallow_matcher_errors is true" do
-        
+
         it "swallows errors in the matcher" do
           expect {
             res = Braai::Template.new(template).render()
@@ -109,7 +134,7 @@ EOF
         before(:each) do
           Braai.config.swallow_matcher_errors = false
         end
-        
+
         it "raises the errors from the matcher" do
           expect {
             res = Braai::Template.new(template).render
