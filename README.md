@@ -62,29 +62,29 @@ response.should eql "I'm MARK and Damn, I love BBQ!!"
 Braai supports looping right out of the box.
 
 ```ruby
-template = &lt;&lt;-EOF
-&lt;h1>{{ greet }}&lt;/h1>
-&lt;ul>
+template = <<-EOF
+<h1>{{ greet }}</h1>
+<ul>
   {{ for product in products }}
-    &lt;li>{{ product }}&lt;/li>
+    <li>{{ product }}</li>
   {{ /for }}
-&lt;/ul>
-&lt;div>
+</ul>
+<div>
   {{ for food in foods }}
-    &lt;p>{{ food }}&lt;/p>
+    <p>{{ food }}</p>
   {{ /for }}
-&lt;/div>
-&lt;h2>{{greet.upcase}}&lt;/h2>
+</div>
+<h2>{{greet.upcase}}</h2>
 EOF
 
 res = Braai::Template.new(template).render(greet: "mark", products: %w{car boat truck}, foods: %w{apple orange})
-res.should match("&lt;h1>mark&lt;/h1>")
-res.should match("&lt;li>car&lt;/li>")
-res.should match("&lt;li>boat&lt;/li>")
-res.should match("&lt;li>truck&lt;/li>")
-res.should match("&lt;p>apple&lt;/p>")
-res.should match("&lt;p>orange&lt;/p>")
-res.should match("&lt;h2>MARK&lt;/h2>")
+res.should match("<h1>mark</h1>")
+res.should match("<li>car</li>")
+res.should match("<li>boat</li>")
+res.should match("<li>truck</li>")
+res.should match("<p>apple</p>")
+res.should match("<p>orange</p>")
+res.should match("<h2>MARK</h2>")
 ```
 
 ## Contributing
