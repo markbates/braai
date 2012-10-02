@@ -25,25 +25,25 @@ Braai comes shipped with two simple matchers for you, but you can easily add you
 
 The first matcher is a simple <code>to_s</code> matcher. It will match a single variable and then call <code>to_s</code> on it:
 
-<pre><code>
+```ruby
 template = "Hi {{ name }}!"
 response = Braai::Template.new(template).render(name: "Mark")
 response.should eql "Hi Mark!"
-</code></pre>
+```
 
 The second matcher will call a method on the variable.
 
-<pre><code>
+```ruby
 template = "Hi {{ name.upcase }}!"
 response = Braai::Template.new(template).render(name: "Mark")
 response.should eql "Hi MARK!"
-</code></pre>
+```
 
 ### Custom Matchers
 
 Braai let's you easily define your own matchers to do whatever you would like to do.
 
-<pre><code>
+```ruby
 template = "I'm {{ name }} and {{ mmm... bbq }}!"
 Braai::Template.map(/({{\s*mmm\.\.\. bbq\s*}})/i) do |template, key, matches|
   "Damn, I love BBQ!"
@@ -55,13 +55,13 @@ end
 
 response = Braai::Template.new(template).render(name: "mark")
 response.should eql "I'm MARK and Damn, I love BBQ!!"
-</code></pre>
+```
 
 ### For Loops
 
 Braai supports looping right out of the box.
 
-<pre><code>
+```ruby
 template = &lt;&lt;-EOF
 &lt;h1>{{ greet }}&lt;/h1>
 &lt;ul>
@@ -85,7 +85,7 @@ res.should match("&lt;li>truck&lt;/li>")
 res.should match("&lt;p>apple&lt;/p>")
 res.should match("&lt;p>orange&lt;/p>")
 res.should match("&lt;h2>MARK&lt;/h2>")
-</code></pre>
+```
 
 ## Contributing
 
@@ -94,3 +94,8 @@ res.should match("&lt;h2>MARK&lt;/h2>")
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Contributers
+
+* Mark Bates
+* Kevin Incorvia

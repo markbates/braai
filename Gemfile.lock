@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    braai (1.1.0)
+    braai (1.1.2)
       activesupport
 
 GEM
