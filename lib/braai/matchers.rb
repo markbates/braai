@@ -4,8 +4,8 @@ module Braai::Matchers
     @matchers ||= reset!
   end
 
-  def map(regex, &block)
-    @matchers = {regex.to_s => block}.merge(self.matchers)
+  def map(regex, handler = nil, &block)
+    @matchers = {regex.to_s => handler || block}.merge(self.matchers)
   end
 
   def unmap(regex)

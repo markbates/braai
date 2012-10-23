@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe Braai::Template do
 
+  class GreetHandler
+    def self.call(template, key, matches)
+      template.attributes[:greet].upcase
+    end
+  end
+
   let(:greet_regex) { /^greet$/i }
   let(:greet_matcher) do
     ->(view, key, matches) {
@@ -17,17 +23,28 @@ describe Braai::Template do
       Braai::Template.matchers.should have_key(greet_regex.to_s)
     end
 
+    it "takes a class that responds to call" do
+      Braai::Template.map(greet_regex, GreetHandler)
+      Braai::Template.matchers.should have_key(greet_regex.to_s)
+    end
+
   end
 
   describe '#render' do
 
     before(:each) do
       Braai::Template.map(greet_regex, &greet_matcher)
+      Braai::Template.map(/{{ greetings }}/i, GreetHandler)
     end
 
-    it "renders a simple template" do
+    it "renders a simple template using a block" do
       res = Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
       res.should eql("Hi Mark")
+    end
+
+    it "renders a simple template using a handler class" do
+      res = Braai::Template.new("{{ greetings }}").render(greet: "Hi Mark")
+      res.should eql("HI MARK")
     end
 
     it "doesn't care about spaces" do
