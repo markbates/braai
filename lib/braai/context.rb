@@ -5,7 +5,7 @@ class Braai::Context
   attr_accessor :matchers
 
   def initialize(template, matchers, attributes = {})
-    self.attributes = HashWithIndifferentAccess.new(attributes)
+    self.attributes = Hashie::Mash.new(attributes)
     self.template = template.dup
     self.matchers = matchers
   end
