@@ -1,5 +1,5 @@
 require 'logger'
-require 'active_support/hash_with_indifferent_access'
+require 'hashie'
 require "braai/version"
 require "braai/configuration"
 require "braai/matchers"
