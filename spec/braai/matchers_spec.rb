@@ -41,13 +41,25 @@ describe Braai::Matchers do
   end
 
   describe 'reset!' do
-    
+
     it "resets the matchers to their original state" do
       matchers.should have(3).matchers
       map("foo") {}
       matchers.should have(4).matchers
       reset!
       matchers.should have(3).matchers
+    end
+
+  end
+
+  describe 'set_defaults' do
+
+    it "installs the three base matchers" do
+      clear!
+      map("foo") {}
+      matchers.should have(1).matchers
+      set_defaults
+      matchers.should have(4).matchers
     end
 
   end

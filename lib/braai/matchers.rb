@@ -17,24 +17,32 @@ module Braai::Matchers
   end
 
   def reset!
-    @matchers = {
-      /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im => ->(template, key, matches) {
-        res = []
-        template.attributes[matches[2]].each do |val|
-          res << Braai::Context.new(matches[3], template.matchers, template.attributes.merge(matches[1] => val)).render
-        end
-        res.join("\n")
-      },
-      /({{\s*([\w]+)\.([\w]+)\s*}})/i => ->(template, key, matches) {
-        attr = template.attributes[matches[1]]
-        attr ? attr.send(matches[2]) : nil
-      },
-      /({{\s*([\w]+)\s*}})/i => ->(template, key, matches) {
-        attr = template.attributes[matches.last]
-        attr ? attr.to_s : nil
-      }
+    @matchers = {}
+    set_defaults
+  end
+
+  def set_defaults
+    @matchers ||= {}
+
+    @matchers[/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im] = ->(template, key, matches) {
+      res = []
+      template.attributes[matches[2]].each do |val|
+        res << Braai::Context.new(matches[3], template.matchers, template.attributes.merge(matches[1] => val)).render
+      end
+      res.join("\n")
     }
-    return @matchers
+
+    @matchers[/({{\s*([\w]+)\.([\w]+)\s*}})/i] = ->(template, key, matches) {
+      attr = template.attributes[matches[1]]
+      attr ? attr.send(matches[2]) : nil
+    }
+
+    @matchers[/({{\s*([\w]+)\s*}})/i] = ->(template, key, matches) {
+      attr = template.attributes[matches.last]
+      attr ? attr.to_s : nil
+    }
+
+    @matchers
   end
 
 end
