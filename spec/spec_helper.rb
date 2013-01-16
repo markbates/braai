@@ -2,11 +2,14 @@ require 'bundler/setup'
 
 require 'braai' # and any other gems you need
 
+require 'minitest/autorun'
+require "minitest-colorize"
+
 Braai.config.logger = Logger.new(StringIO.new)
 
-RSpec.configure do |config|
+class MiniTest::Spec
 
-  config.before do
+  before do
     Braai::Template.reset!
   end
 

@@ -28,7 +28,7 @@ The first matcher is a simple <code>to_s</code> matcher. It will match a single 
 ```ruby
 template = "Hi {{ name }}!"
 response = Braai::Template.new(template).render(name: "Mark")
-response.should eql "Hi Mark!"
+response.must_equal "Hi Mark!"
 ```
 
 The second matcher will call a method on the variable.
@@ -36,7 +36,7 @@ The second matcher will call a method on the variable.
 ```ruby
 template = "Hi {{ name.upcase }}!"
 response = Braai::Template.new(template).render(name: "Mark")
-response.should eql "Hi MARK!"
+response.must_equal "Hi MARK!"
 ```
 
 ### Custom Matchers
@@ -54,7 +54,7 @@ Braai::Template.map(/({{\s*name\s*}})/i) do |template, key, matches|
 end
 
 response = Braai::Template.new(template).render(name: "mark")
-response.should eql "I'm MARK and Damn, I love BBQ!!"
+response.must_equal "I'm MARK and Damn, I love BBQ!!"
 ```
 
 ### For Loops

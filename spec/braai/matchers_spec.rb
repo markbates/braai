@@ -7,13 +7,13 @@ describe Braai::Matchers do
 
     it "maps a new matcher" do
       map("foo") {}
-      matchers.should include("foo")
+      matchers.must_include("foo")
     end
 
     it "makes the latest matcher the first matcher in the list" do
       map("foo") {}
       map("bar") {}
-      matchers.keys.first.should eql("bar")
+      matchers.keys.first.must_equal("bar")
     end
     
   end
@@ -22,9 +22,9 @@ describe Braai::Matchers do
     
     it "unmaps a matcher" do
       map("foo") {}
-      matchers.should include("foo")
+      matchers.must_include("foo")
       unmap("foo")
-      matchers.should_not include("foo")
+      matchers.wont_include("foo")
     end
 
   end
@@ -33,9 +33,9 @@ describe Braai::Matchers do
     
     it "removes all of the matchers" do
       map("foo") {}
-      matchers.should_not be_empty
+      matchers.wont_be_empty
       clear!
-      matchers.should be_empty
+      matchers.must_be_empty
     end
 
   end
@@ -43,11 +43,11 @@ describe Braai::Matchers do
   describe 'reset!' do
 
     it "resets the matchers to their original state" do
-      matchers.should have(3).matchers
+      matchers.size.must_equal(3)
       map("foo") {}
-      matchers.should have(4).matchers
+      matchers.size.must_equal(4)
       reset!
-      matchers.should have(3).matchers
+      matchers.size.must_equal(3)
     end
 
   end
@@ -57,9 +57,9 @@ describe Braai::Matchers do
     it "installs the three base matchers" do
       clear!
       map("foo") {}
-      matchers.should have(1).matchers
+      matchers.size.must_equal(1)
       set_defaults
-      matchers.should have(4).matchers
+      matchers.size.must_equal(4)
     end
 
   end

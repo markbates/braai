@@ -8,8 +8,11 @@ describe Braai::Context do
 
       it 'allows a nested hash' do
         context = Braai::Context.new("template", "matchers", { hash: { foo: 'bar' } })
-        context.attributes[:hash].should eql("foo" => 'bar')
+        context.attributes[:hash].must_equal("foo" => 'bar')
       end
+
     end
+
   end
+
 end
