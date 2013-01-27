@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Braai::Matchers do
   include Braai::Matchers
-  
+
   describe 'map' do
 
     it "maps a new matcher" do
@@ -15,11 +15,11 @@ describe Braai::Matchers do
       map("bar") {}
       matchers.keys.first.must_equal("bar")
     end
-    
+
   end
 
   describe 'unmap' do
-    
+
     it "unmaps a matcher" do
       map("foo") {}
       matchers.must_include("foo")
@@ -30,7 +30,7 @@ describe Braai::Matchers do
   end
 
   describe 'clear!' do
-    
+
     it "removes all of the matchers" do
       map("foo") {}
       matchers.wont_be_empty
