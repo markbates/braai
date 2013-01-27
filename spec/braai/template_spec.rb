@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 
 describe Braai::Template do
 
@@ -17,7 +18,7 @@ describe Braai::Template do
 
   describe '.map' do
 
-    it "let's you register a matcher" do
+    it "lets you register a matcher" do
       Braai::Template.matchers.wont_include(greet_regex.to_s)
       Braai::Template.map(greet_regex, &greet_matcher)
       Braai::Template.matchers.must_include(greet_regex.to_s)
@@ -113,6 +114,7 @@ EOF
     describe "default matcher" do
 
       let(:template) { "{{ greet }} {{ name.upcase }}" }
+      let(:adv_template) { "{{ greet }} my name is {{ name.full_name.upcase }}" }
 
       it "uses the default matcher to render" do
         res = Braai::Template.new(template).render(greet: "Hi", name: "mark")
@@ -122,6 +124,16 @@ EOF
       it "handles the attribute not being there" do
         res = Braai::Template.new(template).render(greet: "Hi")
         res.must_equal("Hi {{ name.upcase }}")
+      end
+
+      it "handles deeply nested attributes" do
+        res = Braai::Template.new(adv_template).render(greet: "Hello", name: OpenStruct.new(full_name: 'inigo montoya'))
+        res.must_equal("Hello my name is INIGO MONTOYA")
+      end
+
+      it "handles nested attribute hashes" do
+        res = Braai::Template.new(adv_template).render(greet: "Hello", name: { full_name: 'inigo montoya' })
+        res.must_equal("Hello my name is INIGO MONTOYA")
       end
 
     end

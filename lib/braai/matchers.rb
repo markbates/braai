@@ -32,9 +32,22 @@ module Braai::Matchers
       res.join("\n")
     }
 
-    @matchers[/({{\s*([\w]+)\.([\w]+)\s*}})/i] = ->(template, key, matches) {
-      attr = template.attributes[matches[1]]
-      attr ? attr.send(matches[2]) : nil
+    @matchers[/({{\s*([\w\.]+)\s*}})/i] = ->(template, key, matches) {
+      chain = matches[1].split('.')
+      value = template.attributes[chain.shift]
+      return nil unless value
+
+      chain.each do |a|
+        if value.respond_to?(a.to_sym)
+          value = value.send(a)
+        elsif value.is_a?(Hash)
+          value = value[a.to_sym] || value[a.to_s]
+        else
+          return nil
+        end
+      end
+
+      value
     }
 
     @matchers[/({{\s*([\w]+)\s*}})/i] = ->(template, key, matches) {
