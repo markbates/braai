@@ -22,40 +22,8 @@ module Braai::Matchers
   end
 
   def set_defaults
-    @matchers ||= {}
-
-    @matchers[/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im] = ->(template, key, matches) {
-      res = []
-      template.attributes[matches[2]].each do |val|
-        res << Braai::Context.new(matches[3], template.matchers, template.attributes.merge(matches[1] => val)).render
-      end
-      res.join("\n")
-    }
-
-    @matchers[/({{\s*([\w\.]+)\s*}})/i] = ->(template, key, matches) {
-      chain = matches[1].split('.')
-      value = template.attributes[chain.shift]
-      return nil unless value
-
-      chain.each do |a|
-        if value.respond_to?(a.to_sym)
-          value = value.send(a)
-        elsif value.is_a?(Hash)
-          value = value[a.to_sym] || value[a.to_s]
-        else
-          return nil
-        end
-      end
-
-      value
-    }
-
-    @matchers[/({{\s*([\w]+)\s*}})/i] = ->(template, key, matches) {
-      attr = template.attributes[matches.last]
-      attr ? attr.to_s : nil
-    }
-
-    @matchers
+    map(/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im, Braai::Handlers::IterationHandler)
+    map(/({{\s*([\w\.]+)\s*}})/i, Braai::Handlers::DefaultHandler)
   end
 
 end
