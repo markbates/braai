@@ -98,5 +98,5 @@ res.should match("<h2>MARK</h2>")
 ## Contributers
 
 * Mark Bates
-* Kevin Incorvia
 * Nick Plante
+* Kevin Incorvia
