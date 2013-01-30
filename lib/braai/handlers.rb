@@ -26,11 +26,11 @@ module Braai::Handlers
     end
 
     def perform
-      key
+      template
     end
 
     def rescue_from_error(e)
-      nil
+      template
     end
   end
 
