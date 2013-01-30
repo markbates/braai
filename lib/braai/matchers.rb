@@ -22,8 +22,8 @@ module Braai::Matchers
   end
 
   def set_defaults
-    map(/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im, Braai::Handlers::IterationHandler)
-    map(/({{\s*([\w\.]+)\s*}})/i, Braai::Handlers::DefaultHandler)
+    map(/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im, Braai::Handlers::Iteration)
+    map(/({{\s*([\w\.]+)\s*}})/i, Braai::Handlers::Default)
   end
 
 end
