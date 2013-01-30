@@ -2,6 +2,7 @@ module Braai::Matchers
 
   IterationMatcher = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
   DefaultMatcher = /({{\s*([\w\.]+)\s*}})/i
+  RegionMatcher = /({{\s*([\w]+)\s*}}(.*){{\s*\/([\w]+)\s*}})/mi
 
   def matchers
     @matchers ||= reset!

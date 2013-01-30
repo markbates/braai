@@ -11,6 +11,11 @@ describe Braai::Handlers::Base do
   let(:matches)  { [ "{{ person.name }}", "name" ] }
   let(:handler)  { Braai::Handlers::Base.new(template, key, matches) }
 
+  before do
+    Braai::Handlers::Base.error_handler = nil
+    Braai::Handlers::Base.nomatch_handler = nil
+  end
+
   describe '.call' do
 
     it 'condition' do
@@ -44,10 +49,15 @@ describe Braai::Handlers::Base do
       handler.safe_perform
     end
 
-    it 'should rescue from error when needed' do
+    it 'rescues from error when needed' do
       handler.stubs(:perform).raises(ArgumentError)
       handler.expects(:rescue_from_error).returns('<!-- foo -->')
       handler.safe_perform.must_equal('<!-- foo -->')
+    end
+
+    it 'falls back on an optional nomatch handler' do
+      Braai::Handlers::Base.nomatch_handler = ->(value) { "<!-- no match for #{value} -->" }
+      handler.safe_perform.must_equal("<!-- no match for {{ person.name }} -->")
     end
   end
 
