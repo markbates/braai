@@ -1,5 +1,8 @@
 module Braai::Matchers
 
+  IterationMatcher = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
+  DefaultMatcher = /({{\s*([\w\.]+)\s*}})/i
+
   def matchers
     @matchers ||= reset!
   end
@@ -22,8 +25,8 @@ module Braai::Matchers
   end
 
   def set_defaults
-    map(/({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im, Braai::Handlers::Iteration)
-    map(/({{\s*([\w\.]+)\s*}})/i, Braai::Handlers::Default)
+    map(IterationMatcher, Braai::Handlers::Iteration)
+    map(DefaultMatcher, Braai::Handlers::Default)
   end
 
 end
