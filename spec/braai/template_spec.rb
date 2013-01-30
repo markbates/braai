@@ -38,6 +38,11 @@ describe Braai::Template do
       Braai::Template.map(/{{ greetings }}/i, GreetHandler)
     end
 
+    it "renders a template without matches" do
+      res = Braai::Template.new("Hi {{ greet }}").render()
+      res.must_equal("Hi {{ greet }}")
+    end
+
     it "renders a simple template using a block" do
       res = Braai::Template.new("{{ greet }}").render(greet: "Hi Mark")
       res.must_equal("Hi Mark")
@@ -73,6 +78,12 @@ describe Braai::Template do
           template = "<h1>{{ greet }}</h1><h2>{{ greet mark }}</h2>"
           res = Braai::Template.new(template).render
           res.must_equal("<h1>greet</h1><h2>greetmark</h2>")
+        end
+
+        it "matches only one" do
+          template = "<h1>{{ greet }}</h1><h2>{{ unmatched }}</h2>"
+          res = Braai::Template.new(template).render
+          res.must_equal("<h1>greet</h1><h2>{{ unmatched }}</h2>")
         end
 
       end
