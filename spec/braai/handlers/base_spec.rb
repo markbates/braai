@@ -32,8 +32,8 @@ describe Braai::Handlers::Base do
 
   describe '#perform' do
 
-    it 'returns the original template by default' do
-      handler.perform.must_equal("Hello {{ person.name }}")
+    it 'returns the key by default (should be overridden in implementations)' do
+      handler.perform.must_equal("{{ person.name }}")
     end
   end
 
@@ -44,16 +44,32 @@ describe Braai::Handlers::Base do
       handler.safe_perform
     end
 
-    it 'should receive rescue_from_error when needed' do
+    it 'should rescue from error when needed' do
       handler.stubs(:perform).raises(ArgumentError)
-      handler.safe_perform.must_equal('Hello {{ person.name }}')
+      handler.expects(:rescue_from_error).returns('<!-- foo -->')
+      handler.safe_perform.must_equal('<!-- foo -->')
     end
   end
 
   describe '#rescue_from_error' do
 
-    it 'call the class method of the same name' do
-      handler.rescue_from_error(ArgumentError).must_equal('Hello {{ person.name }}')
+    it 'defaults to returning the unmodified template' do
+      handler.rescue_from_error(ArgumentError).must_equal('{{ person.name }}')
+    end
+
+    it 'calls a user-defined error handler if specified' do
+      Braai::Handlers::Base.error_handler = ->(e) { "<!-- #{key} -->" }
+      handler.rescue_from_error(ArgumentError).must_equal('<!-- {{ person.name }} -->')
+    end
+  end
+
+  describe 'default template rendering' do
+
+    it 'performs no substitution' do
+      Braai::Template.clear!
+      Braai::Template.map(Braai::Matchers::DefaultMatcher, Braai::Handlers::Base)
+      res = Braai::Template.new("{{ greet }} my name is {{ name }}").render(greet: "Hello")
+      res.must_equal("{{ greet }} my name is {{ name }}")
     end
   end
 end

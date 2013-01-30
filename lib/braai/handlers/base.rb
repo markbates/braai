@@ -10,6 +10,8 @@ module Braai::Handlers
 
     class << self
 
+      attr_accessor :error_handler
+
       def call(template, key, matches)
         handler = self.new(template, key, matches)
         handler.safe_perform
@@ -26,11 +28,15 @@ module Braai::Handlers
     end
 
     def perform
-      template
+      key
     end
 
     def rescue_from_error(e)
-      template
+      if self.class.error_handler
+        self.class.error_handler.call(e)
+      else
+        key
+      end
     end
   end
 end
