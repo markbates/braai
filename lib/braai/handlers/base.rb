@@ -1,4 +1,9 @@
+# Braai.rescue_from Exception, ->{}
+# Braai.rescue_from ArgumentError, ->{}
+
+
 module Braai::Handlers
+
   class Base
     attr_accessor :template, :key, :matches
 
@@ -9,8 +14,6 @@ module Braai::Handlers
     end
 
     class << self
-
-      attr_accessor :error_handler, :nomatch_handler
 
       def call(template, key, matches)
         handler = self.new(template, key, matches)
@@ -24,11 +27,6 @@ module Braai::Handlers
       rescue => e
         rescue_from_error(e)
       end
-
-      if [key, nil].include?(value) && self.class.nomatch_handler
-        value = self.class.nomatch_handler.call(key)
-      end
-
       value
     end
 
@@ -38,11 +36,12 @@ module Braai::Handlers
     end
 
     def rescue_from_error(e)
-      if self.class.error_handler
-        self.class.error_handler.call(e)
-      else
-        key
+      Braai::Handlers.rescuers.each do |rescuer|
+        if e.is_a?(rescuer[:klass])
+          return rescuer[:handler].call(self)
+        end
       end
+      raise e
     end
   end
 end

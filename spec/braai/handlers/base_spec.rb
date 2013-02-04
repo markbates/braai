@@ -12,8 +12,7 @@ describe Braai::Handlers::Base do
   let(:handler)  { Braai::Handlers::Base.new(template, key, matches) }
 
   before do
-    Braai::Handlers::Base.error_handler = nil
-    Braai::Handlers::Base.nomatch_handler = nil
+    Braai::Handlers.rescuers.clear
   end
 
   describe '.call' do
@@ -55,22 +54,27 @@ describe Braai::Handlers::Base do
       handler.safe_perform.must_equal('<!-- foo -->')
     end
 
-    it 'falls back on an optional nomatch handler' do
-      Braai::Handlers::Base.nomatch_handler = ->(value) { "<!-- no match for #{value} -->" }
-      handler.safe_perform.must_equal("<!-- no match for {{ person.name }} -->")
-    end
   end
 
   describe '#rescue_from_error' do
 
-    it 'defaults to returning the unmodified template' do
-      handler.rescue_from_error(ArgumentError).must_equal('{{ person.name }}')
+    it 'calls a user-defined error handler if specified' do
+      Braai::Handlers.rescue_from ArgumentError, ->(e) { "<!-- #{key} -->" }
+      handler.rescue_from_error(ArgumentError.new).must_equal('<!-- {{ person.name }} -->')
     end
 
-    it 'calls a user-defined error handler if specified' do
-      Braai::Handlers::Base.error_handler = ->(e) { "<!-- #{key} -->" }
-      handler.rescue_from_error(ArgumentError).must_equal('<!-- {{ person.name }} -->')
+    it "raises the error if there is not rescuer" do
+      ->{
+        handler.rescue_from_error(ArgumentError.new)
+      }.must_raise(ArgumentError)
     end
+
+    it "stops after the first matching rescuer" do
+      Braai::Handlers.rescue_from Exception, ->(e) { "!!! #{key} !!!" }
+      Braai::Handlers.rescue_from ArgumentError, ->(e) { "<!-- #{key} -->" }
+      handler.rescue_from_error(ArgumentError.new).must_equal('<!-- {{ person.name }} -->')
+    end
+
   end
 
   describe 'default template rendering' do
