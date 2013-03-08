@@ -99,4 +99,5 @@ res.should match("<h2>MARK</h2>")
 
 * Mark Bates
 * Nick Plante
+* Sam Beam
 * Kevin Incorvia
