@@ -7,7 +7,8 @@ describe Braai::Context do
     describe 'attributes arguments' do
 
       it 'allows a nested hash' do
-        context = Braai::Context.new("template", "matchers", { hash: { foo: 'bar' } })
+        template = mock(:matchers => true, :fallback => true)
+        context = Braai::Context.new("some {{stuff}}", template, { hash: { foo: 'bar' } })
         context.attributes[:hash].must_equal("foo" => 'bar')
       end
 

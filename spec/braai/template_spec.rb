@@ -59,6 +59,7 @@ describe Braai::Template do
       res.must_equal("<h1>Hi Mark</h1><h2>Hi Mark</h2>")
     end
 
+
     describe 'matches' do
 
       describe 'multimatches' do
@@ -86,6 +87,31 @@ describe Braai::Template do
           res.must_equal("<h1>greet</h1><h2>{{ unmatched }}</h2>")
         end
 
+      end
+
+    end
+
+
+    describe "with fallback matcher" do
+
+      before do
+        Braai::Template.add_fallback(/({{ (\w+) }})/, ->(view, key, matches) { "UNMATCHED_TAG" })
+      end
+
+      it "is called" do
+        template = "<h2>{{ bango }}</h2>"
+        res = Braai::Template.new(template).render
+        res.must_equal("<h2>UNMATCHED_TAG</h2>")
+      end
+
+      it "always comes last" do
+
+        Braai::Template.map(/({{ yummy_(\w+) }})/, ->(view, key, matches) { "#{matches[1].upcase}: #{view.attributes[matches[1]]}" })
+
+        template = "<h2>{{ bango }}</h2><p>{{ yummy_food }}</p><p>{{ yummy_drink }}</p> {{ blaz }}"
+
+        res = Braai::Template.new(template).render(food: 'pizza', drink: 'beer')
+        res.must_equal("<h2>UNMATCHED_TAG</h2><p>FOOD: pizza</p><p>DRINK: beer</p> UNMATCHED_TAG")
       end
 
     end

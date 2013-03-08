@@ -1,5 +1,7 @@
 module Braai::Matchers
 
+  attr_accessor :fallback
+
   IterationMatcher = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
   DefaultMatcher = /({{\s*([\w\.]+)\s*}})/i
   RegionMatcher = /({{\s*([\w]+)\s*}}(.*){{\s*\/([\w]+)\s*}})/mi
@@ -10,6 +12,10 @@ module Braai::Matchers
 
   def map(regex, handler = nil, &block)
     @matchers = {regex.to_s => handler || block}.merge(self.matchers)
+  end
+
+  def add_fallback(regex, handler=nil, &block)
+    @fallback = { :regex => regex.to_s, :handler => handler || block }
   end
 
   def unmap(regex)

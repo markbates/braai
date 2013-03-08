@@ -38,7 +38,7 @@ module Braai::Handlers
     def rescue_from_error(e)
       Braai::Handlers.rescuers.each do |rescuer|
         if e.is_a?(rescuer[:klass])
-          return rescuer[:handler].call(self)
+          return rescuer[:handler].call(self, e)
         end
       end
       raise e
