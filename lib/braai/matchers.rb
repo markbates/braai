@@ -24,6 +24,7 @@ module Braai::Matchers
 
   def clear!
     self.matchers.clear
+    self.fallback = nil
   end
 
   def reset!

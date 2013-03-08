@@ -3,6 +3,7 @@ require 'ostruct'
 
 describe Braai::Template do
 
+
   class GreetHandler
     def self.call(template, key, matches)
       template.attributes[:greet].upcase
@@ -72,6 +73,7 @@ describe Braai::Template do
         end
 
         before do
+          Braai::Template.clear!
           Braai::Template.map(multi_regex, &multi_matcher)
         end
 
@@ -92,7 +94,7 @@ describe Braai::Template do
     end
 
 
-    describe "with fallback matcher", :focus do
+    describe "fallback matcher" do
 
       before do
         Braai::Template.map(/({{ yummy_(\w+) }})/, ->(view, key, matches) { "#{matches[1].upcase}: #{view.attributes[matches[1]]}" })
@@ -106,10 +108,10 @@ describe Braai::Template do
       end
 
       it "always comes last" do
-        template = "<h2>{{ bango }}</h2><p>{{ yummy_dood }}</p><p>{{ yummy_drink }}</p> {{ blaz }}"
+        template = "<h2>{{ bango }}</h2><p>{{ yummy_food }}</p><p>{{ yummy_drink }}</p> {{ blaz }}"
 
-        res = Braai::Template.new(template).render(dood: 'pizza', drink: 'beer')
-        res.must_equal("<h2>UNMATCHED_TAG</h2><p>DOOD: pizza</p><p>DRINK: beer</p> UNMATCHED_TAG")
+        res = Braai::Template.new(template).render(food: 'pizza', drink: 'beer')
+        res.must_equal("<h2>UNMATCHED_TAG</h2><p>FOOD: pizza</p><p>DRINK: beer</p> UNMATCHED_TAG")
       end
 
     end
