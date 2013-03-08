@@ -59,7 +59,7 @@ describe Braai::Handlers::Base do
   describe '#rescue_from_error' do
 
     it 'calls a user-defined error handler if specified' do
-      Braai::Handlers.rescue_from ArgumentError, ->(e) { "<!-- #{key} -->" }
+      Braai::Handlers.rescue_from ArgumentError, ->(handler, e) { "<!-- #{key} -->" }
       handler.rescue_from_error(ArgumentError.new).must_equal('<!-- {{ person.name }} -->')
     end
 
@@ -70,8 +70,8 @@ describe Braai::Handlers::Base do
     end
 
     it "stops after the first matching rescuer" do
-      Braai::Handlers.rescue_from Exception, ->(e) { "!!! #{key} !!!" }
-      Braai::Handlers.rescue_from ArgumentError, ->(e) { "<!-- #{key} -->" }
+      Braai::Handlers.rescue_from Exception, ->(handler, e) { "!!! #{key} !!!" }
+      Braai::Handlers.rescue_from ArgumentError, ->(handler, e) { "<!-- #{key} -->" }
       handler.rescue_from_error(ArgumentError.new).must_equal('<!-- {{ person.name }} -->')
     end
 
