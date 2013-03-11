@@ -17,6 +17,12 @@ describe Braai::Handlers::Default do
     res.must_equal("Hi {{ name.upcase }}")
   end
 
+  it "handles nil attributes (that are actually nil, not missing)" do
+    person = OpenStruct.new(salutation: nil, name: 'Fred Rogers')
+    res = Braai::Template.new("{{ greet }} {{ person.salutation }} {{ person.name }}").render(greet: "Hi", person: person)
+    res.must_equal("Hi  Fred Rogers")
+  end
+
   it "handles deeply nested attributes" do
     res = Braai::Template.new(adv_template).render(greet: "Hello", name: OpenStruct.new(full_name: 'inigo montoya'))
     res.must_equal("Hello my name is INIGO MONTOYA")
