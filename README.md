@@ -57,9 +57,22 @@ response = Braai::Template.new(template).render(name: "mark")
 response.must_equal "I'm MARK and Damn, I love BBQ!!"
 ```
 
+### Conditional Logic
+
+Braai supports conditional logic with simple if statements (no support for comparisons yet).
+
+```ruby
+template = '{{ product.name }}{{ if product.featured }}***{{ /if }}'
+featured_product = OpenStruct.new(name: 'Special Product', featured: true)
+regular_product = OpenStruct.new(name: 'Regular Product', featured: false)
+
+Braai::Template.new(template).render(product: featured_product).must_equal("Special Product***")
+Braai::Template.new(template).render(product: regular_product).must_equal("Regular Product")
+```
+
 ### For Loops
 
-Braai supports looping right out of the box.
+Braai also supports looping right out of the box.
 
 ```ruby
 template = <<-EOF

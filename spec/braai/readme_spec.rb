@@ -28,6 +28,14 @@ describe 'README' do
     response.must_equal "I'm MARK and Damn, I love BBQ!!"
   end
 
+  it "if statement example" do
+    template = '{{ product.name }}{{ if product.featured }}***{{ /if }}'
+    featured_product = OpenStruct.new(name: 'Special Product', featured: true)
+    regular_product = OpenStruct.new(name: 'Regular Product', featured: false)
+    Braai::Template.new(template).render(product: featured_product).must_equal("Special Product***")
+    Braai::Template.new(template).render(product: regular_product).must_equal("Regular Product")
+  end
+
   it "for loop example" do
     template = <<-EOF
 <h1>{{ greet }}</h1>

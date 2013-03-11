@@ -2,6 +2,7 @@ require 'logger'
 require "active_support/core_ext/hash/indifferent_access"
 require "braai/version"
 require "braai/configuration"
+require "braai/helpers"
 require "braai/handlers"
 require "braai/matchers"
 require "braai/template"
