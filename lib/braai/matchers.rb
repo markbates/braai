@@ -2,9 +2,10 @@ module Braai::Matchers
 
   attr_accessor :fallback
 
-  IterationMatcher = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
-  DefaultMatcher = /({{\s*([\w\.]+)\s*}})/i
-  RegionMatcher = /({{\s*([\w]+)\s*}}(.*){{\s*\/([\w]+)\s*}})/mi
+  IterationMatcher   = /({{\s*for (\w+) in (\w+)\s*}}(.+?){{\s*\/for\s*}})/im
+  ConditionalMatcher = /({{\s*if\s*([\w\.]+)\s*}}(.*){{\s*\/if\s*}})/mi
+  DefaultMatcher     = /({{\s*([\w\.]+)\s*}})/i
+  RegionMatcher      = /({{\s*([\w]+)\s*}}(.*){{\s*\/([\w]+)\s*}})/mi
 
   def matchers
     @matchers ||= reset!
@@ -34,6 +35,7 @@ module Braai::Matchers
 
   def set_defaults
     map(IterationMatcher, Braai::Handlers::Iteration)
+    map(ConditionalMatcher, Braai::Handlers::Conditional)
     map(DefaultMatcher, Braai::Handlers::Default)
   end
 
